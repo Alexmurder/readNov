@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="js/mui.min.js"></script>
+    <script src="js/PUGE-0.2.js"></script>
+    <script src="js/jquery-3.1.0.min.js"></script>
+
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <script type="text/javascript" charset="utf-8">
+      	mui.init();
+    </script>
+    <style>
+    	.zhanwei{
+    		width:100%;
+    		height:40px;
+    	}
+    </style>
+</head>
+<body>
+	<header id="header" class="mui-bar mui-bar-transparent" style="background-color:rgba();">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<h1 class="mui-title" id="mn">我的小说<span style=""><button id="promptBtn" type="button" class="mui-btn mui-btn-blue mui-btn-outlined" style="font-size: 12px; height: 22px;line-height: 8px;width: 55px;float: right;padding: 6px 3px 7px;">添+小说</button></span></h1>
+	</header>
+	<div class="zhanwei"></div>
+	<a href="researchResult.html">上次搜索</a>
+    <a href="content.html" style="left: 80%;position: absolute;">上次阅读</a>
+    <div class="zhanwei"></div> 
+ 	<a href="explain.html">插件说明</a>
+	<div class="title">
+				收藏列表：
+	</div>
+    
+    <!--<li class="mui-table-view-cell mui-collapse mui-active">
+    	<a class="mui-navigate-right" id="lab" href="#">
+    		<button  type="button" class="mui-btn mui-btn-warning">
+					label
+				</button><span id="novelname">novel_name</span></a><a style="font-size: 15px;" id="aut">作者：author</a>
+				<a style="font-size: 15px;" id="lc">最新章节：latest_chapter</a>
+						<ul class="mui-table-view mui-table-view-chevron" style="background-image:url(/readNovel/img/ypz2.jpg); width: 100%;">
+							<span >
+								简介： <br/>
+							</span>
+						       &nbsp;&nbsp;&nbsp;&nbsp;brief_introduction
+							</li>
+						</ul>
+					</li>-->
+			<div>
+		<div id="item_box">
+        	<div id="item"></div>
+   	 	</div >		
+			 <!--<div id="page_button"  class="mui-content-padded">
+       			 <ul class=" mui-pager" >
+           		
+            	<li id="page_1" onclick='page("page1")' class="mui-active">
+                	<a id="page1">1</a>
+            	</li>
+            	<li id="page_2" onclick='page("page2")'>
+                	<a id="page2" >2</a>
+            	</li>
+            	<li id="page_3" onclick='page("page3")'>
+                	<a id="page3">3</a>
+            	</li>
+            	<li id="page_4"  onclick='page("page4")'>
+                	<a id="page4" >4</a>
+            	</li>
+            	<li id="page_5" onclick='page("page5")'>
+                	<a id="page5">5</a>
+            	</li>
+            
+        	</ul>
+    	</div>
+	</div>-->
+			
+</body>
+	<script>
+	//读最新章节
+		var address_chapter = new Array();
+		var address_items = new Array();
+	    function turnNew(addressChapter,addressItems){
+		plus.storage.setItem("address_chapter",addressChapter); 
+		plus.storage.setItem("address_items",addressItems); 
+		window.location.href="content.html";  
+	}
+	(function($){
+			function plusReady(){
+			//添加小说动作
+	document.getElementById("promptBtn").addEventListener('tap', function(search_Name) {
+				search_Name.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+				var btnArray = ['取消', '确定'];
+				mui.prompt('请输入您要查找的小说：', '测试中。。。', 'Hello 用户', btnArray, function(search_Name) {
+					if (search_Name.index == 1) {
+							plus.storage.setItem("searchName",search_Name.value);
+//							alert(search_Name.value);
+							var val = plus.storage.getItem("searchName");
+//							alert(val);
+						window.location.href="researchResult.html";
+					} else {
+//						alert("取消")
+					}
+				})
+		
+			});
+				//成功添加的书本
+		var c = plus.storage.getItem("addCount");//获取先前动作添加书目数
+//		alert(c);
+		
+		var allCount = 0;
+		var allCount = allCount+parseInt(c); 
+//		alert(allCount);
+		var allCounts = plus.storage.setItem("allCounts",allCount+"");
+//		alert(allCount);
+		var book = new Array(allCount);
+//		 	alert(book.length);
+			//分割书目各项信息
+		var bookItem = new Array();	
+		var label = new Array();
+		var novel_name = new Array();
+		var author = new Array();
+		var lastest_chapter = new Array();
+		var brief_introduction = new Array();
+	
+	    var b =	document.getElementById("item");
+            for (c2=0;c2<book.length;c2++) {
+            	book[c2] =plus.storage.getItem("book"+c2);
+				bookItem=book[c2].split(",");
+            	label[c2] =bookItem[1];
+            	novel_name[c2] = bookItem[2];
+            	author[c2] = bookItem[3];
+            	lastest_chapter[c2] = bookItem[4];
+            	brief_introduction[c2] = bookItem[5];
+            	address_chapter[c2]=bookItem[6];
+//          	alert(address_chapter);  
+            	address_items[c2] = bookItem[7];
+//          	alert(address_items); 
+				var a = document.createElement("div");
+				a.setAttribute("class","mui-card");
+            	a.innerHTML = '<div class="mui-table-view-cell mui-collapse " style="list-style: none;"><a class="mui-navigate-right" id="lab" href="#"><button  type="button" id=i class="mui-btn mui-btn-warning">'+label[c2]+'</button><span id="novelname">'+novel_name[c2]+'</span></a><ul class="mui-table-view mui-table-view-chevron" style="background-image:url(/readNovel/img/ypz2.jpg); width: 100%;"><a style="font-size: 15px;color: #000000;" id="aut">作者：'+author[c2]+'</a><a style="font-size: 15px;color: #000000;" id="lc" onclick="turnNew(address_chapter['+c2+'],address_items['+c2+'])"><br/>最新章节：'+lastest_chapter[c2]+'</a><a style="font-size: 15px;color: #000000;"><span><br/>简介： <br/></span>&nbsp;&nbsp;&nbsp;&nbsp;'+brief_introduction+'</a></div>';
+            	insert_tag_after(a,b); 
+            }	
+	}
+	if(window.plus){
+		plusReady();
+	}else{
+		document.addEventListener("plusready",plusReady,false);
+	}
+})(mui);
+
+
+        
+</script>
+
+</html>

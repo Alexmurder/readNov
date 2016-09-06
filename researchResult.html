@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="js/mui.min.js"></script>
+    <script src="js/PUGE-0.2.js"></script>
+  <!--  <script src="js/jquery-3.1.0.min.js"></script>-->
+    <link rel="stylesheet" type="text/css" href="css/app.css"/>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <script type="text/javascript" charset="utf-8">
+      	mui.init();
+    </script>
+    <style>
+    	.zhanwei{
+    		width:100%;
+    		height:40px;
+    	}
+    </style>
+	</head>
+	<body>
+			<header id="header" class="mui-bar mui-bar-transparent" style="background-color:rgba();">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<h1 class="mui-title" id="mn">我的搜索<span style=""><button id="promptBtn" type="button" class="mui-btn mui-btn-blue mui-btn-outlined" style="font-size: 12px; height: 22px;line-height: 8px;width: 55px;float: right;padding: 6px 3px 7px;">添+小说</button></span></h1>
+	</header>
+	<div class="zhanwei"></div>
+	<div class="title">
+				结果列表：
+			</div>
+	
+    //先写一个添加栏的样式看看
+    	<div class="mui-table-view-cell mui-collapse mui-active " style="list-style: none;">
+    		<a class="mui-navigate-right" id="lab" href="#">
+    			<button  type="button" class="mui-btn mui-btn-warning">
+					label
+				</button><span id="novelname">novel_name</span>
+    		</a>
+			<ul class="mui-table-view mui-table-view-chevron" style="background-image:url(/readNovel/img/ypz2.jpg); width: 100%;">
+				<a style="font-size: 15px;color: #000000;" id="aut">作者：author</a>
+				<a style="font-size: 15px;color: #000000;" id="lc"><br/>最新章节：lastest_chapter</a>
+				<a style="font-size: 15px;color: #000000;"><span><br/>简介： <br/></span>&nbsp;&nbsp;&nbsp;&nbsp;brief_introduction </a>
+				<a></br><button type="button" id="addbook" onclick="addBook(i)"  class="mui-btn mui-btn-success mui-icon mui-icon-plus" style="float:right;">放入书架</button></a>
+			</ul>
+		</div>	
+	<div id="item_box">
+        <div id="item">这是锚标记</div> 
+    </div >
+		 <div id="page_button"  class="mui-content-padded">
+       			 <ul class=" mui-pager" >
+            	<li id="page_1" onclick='page("page1")' class="mui-active">
+                	<a id="page1">1</a>
+            	</li>
+            	<li id="page_2" onclick='page("page2")'>
+                	<a id="page2" >2</a>
+            	</li>
+            	<li id="page_3" onclick='page("page3")'>
+                	<a id="page3">3</a>
+            	</li>
+            	<li id="page_4"  onclick='page("page4")'>
+                	<a id="page4">4</a>
+            	</li>
+            	<li id="page_5" onclick='page("page5")'>
+                	<a id="page5">5</a>
+            	</li>
+        	</ul>
+    	</div>
+</body>
+	<script> 
+
+	var count=0;
+	var success3;var ajax;var val_trans;var book = new Array();var i;
+				//放入书架
+			function addBook(i){
+				var btnArray = ['否', '是'];
+				mui.confirm('是否添加本书？', 'Hello 用户', btnArray, function(e) {
+					if (e.index == 1) {
+//						alert(i);
+//						alert(book[i]);
+						plus.storage.setItem("book"+count,book[i]);
+						alert("已添加");
+						count++;
+//						alert(count);
+						plus.storage.setItem("addCount",count+"");
+						var c = plus.storage.getItem("addCount"); 
+//						alert(c);
+						
+					} else {
+						alert("不添加此书");
+					}
+			});
+}
+	(function($){		
+		function plusReady(){
+	
+					//成功响应的回调函数
+			success3 = function(response){
+		 	response = JSON.stringify(response);
+         	var box =cut_string(response,'更新时间','listMore');
+//       	alert(box);
+         	var box_pregments = cut_string_array(box,'<li','</li>');
+         
+         	var novel_name =cut_string_array(box,'index.html\\">','</a>'); 
+            var label =cut_string_array(box,'tag-blue\\">','</i>');
+//          alert(label.length);
+			//每个部分取出作者
+		 	var author =new	Array(); 
+			for (var x=0 ;x<box_pregments.length-1;x++) { 
+				author[x] =cut_string(box_pregments[x],'col-xs-2\\">','</div>');  		
+			};  
+//			alert(author.length);
+			//每个部分取出最后章节
+			var chapters =cut_string_array(box,'col-xs-4\\"><a href=\\"/book/','</div>');
+			var lastest_chapter = new Array();
+//			alert(chapters.length);
+			//每个部分最后章节地址
+			var address_chapter =  new Array();
+			for(var x=0;x<box_pregments.length-1;x++){
+				address_chapter[x] = cut_string_array(box_pregments[x],'col-xs-4\\"><a href=\\"','html'); 
+			};
+		
+			//每一本书总目录地址
+			var address_items = new Array();
+			for(var x=0;x<box_pregments.length-1;x++){
+				address_items[x] = cut_string_array(box_pregments[x],'col-xs-3\\"><a href=\\"/xs','index.html');
+			};
+		
+			//最新一章节
+			for (var x=0;x<chapters.length;x++){
+				lastest_chapter[x] =cut_string(chapters[x],'\\">','</a>'); 
+			};
+//				alert(lastest_chapter.length);  
+            var brief_introduction ="待添加";
+            var b =	document.getElementById("item");
+            for (i in label) {
+				var a = document.createElement("div");
+				a.setAttribute("class","mui-card");
+            	a.innerHTML = '<div class="mui-table-view-cell mui-collapse " style="list-style: none;"><a class="mui-navigate-right" id="lab" href="#"><button  type="button" id=i class="mui-btn mui-btn-warning">'+label[i]+'</button><span id="novelname">'+novel_name[i]+'</span></a><ul class="mui-table-view mui-table-view-chevron" style="background-image:url(/readNovel/img/ypz2.jpg); width: 100%;"><a style="font-size: 15px;color: #000000;" id="aut">作者：'+author[i]+'</a><a style="font-size: 15px;color: #000000;" id="lc"><br/>最新章节：'+lastest_chapter[i]+'</a><a style="font-size: 15px;color: #000000;"><span><br/>简介： <br/></span>&nbsp;&nbsp;&nbsp;&nbsp;'+brief_introduction+'</a><a></br><button type="button" onclick="addBook('+i+')"  class="mui-btn mui-btn-success mui-icon mui-icon-plus" style="float:right;">放入书架</button></a></div>';
+            	insert_tag_after(a,b);
+            	book[i] =i+","+label[i]+","+novel_name[i]+","+author[i]+","+lastest_chapter[i]+","+brief_introduction+","+address_chapter[i]+","+address_items[i]; 
+            }
+	};	
+		var val = plus.storage.getItem("searchName");
+//							alert(val); 
+							val_trans=encodeURI(val);
+//							alert(val_trans);
+		ajax = function(url) {$.get(url, "", success3, "HTML");};
+        ajax('http://www.boquge.com/search.htm?keyword='+val_trans);  
+		}	
+		if(window.plus){
+			plusReady();
+		}else{
+				document.addEventListener("plusready",plusReady,false);
+			}
+    
+    })(mui);
+    
+    
+        //换页事件
+        function page(a) {
+        var click_page =document.getElementById(a);
+        var click_page_number = parseInt(click_page.innerHTML);
+        var page_1=document.getElementById("page1");
+        var page_2=document.getElementById("page2");
+        var page_3=document.getElementById("page3");
+        var page_4=document.getElementById("page4");
+        var page_5=document.getElementById("page5");
+        var active_button1 =document.getElementById("page_1");
+        var active_button2 =document.getElementById("page_2");
+        var active_button3 =document.getElementById("page_3");
+        var itembox =document.getElementById("item_box");
+        alert(click_page_number);
+        if(click_page_number>2){
+            page_1.innerHTML=click_page_number-2;
+            page_2.innerHTML=click_page_number-1;
+            page_3.innerHTML=click_page_number;
+            page_4.innerHTML=click_page_number+1;
+            page_5.innerHTML=click_page_number+2;
+            active_button1.setAttribute("class","");
+            active_button2.setAttribute("class","");
+            active_button3.setAttribute("class","mui-active");
+           itembox.innerHTML='<div id="item"></div>';
+            ajax('http://www.boquge.com/search.htm?keyword='+val_trans+'&pn='+click_page_number);
+          
+        }
+        if (click_page_number==2){
+            page_1.innerHTML=click_page_number-1;
+            page_2.innerHTML=click_page_number;
+            page_3.innerHTML=click_page_number+1; 
+            page_4.innerHTML=click_page_number+2;
+            page_5.innerHTML=click_page_number+3;
+            active_button1.setAttribute("class","");
+            active_button2.setAttribute("class","mui-active");
+            active_button3.setAttribute("class","");
+            itembox.innerHTML='<div id="item"></div>';
+            ajax('http://www.boquge.com/search.htm?keyword='+val_trans+'&pn='+click_page_number);
+        }
+        if(click_page_number==1){
+        	page_1.innerHTML=click_page_number;
+        	page_2.innerHTML=click_page_number+1;
+        	page_3.innerHTML=click_page_number+2;
+        	page_4.innerHTML=click_page_number+3;
+        	page_5.innerHTML=click_page_number+4;
+        	active_button1.setAttribute("class","mui-active");
+        	active_button2.setAttribute("class","");
+        	active_button3.setAttribute("class","");
+        	itembox.innerHTML='<div id="item"></div>';
+        	ajax('http://www.boquge.com/search.htm?keyword='+val_trans+'&pn'+click_page_number);
+        }
+    }
+        
+	</script>
+</html>

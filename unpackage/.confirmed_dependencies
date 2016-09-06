@@ -1,0 +1,74 @@
+{
+	"index.html": {
+		"resources": [
+			"prefixfree.min.js",
+			"js/mui.min.js",
+			"fonts/mui.ttf",
+			"css/mui.min.css",
+			"js/PUGE-0.2.js",
+			"js/jquery-3.1.0.min.js",
+			"readNov.html",
+			"researchResult.html",
+			"content.html",
+			"explain.html"
+		],
+		"refer": [
+			"readNov.html",
+			"researchResult.html",
+			"content.html",
+			"explain.html"
+		]
+	},
+	"readNov.html": {
+		"resources": [
+			"css/app.css",
+			"js/mui.min.js",
+			"css/mui.min.css",
+			"js/PUGE-0.2.js",
+			"js/jquery-3.1.0.min.js",
+			"fonts/mui.ttf",
+			"index.html",
+			"content.html"
+		],
+		"refer": [
+			"index.html",
+			"content.html"
+		]
+	},
+	"researchResult.html": {
+		"resources": [
+			"css/app.css",
+			"js/mui.min.js",
+			"fonts/mui.ttf",
+			"css/mui.min.css",
+			"js/PUGE-0.2.js",
+			"js/jquery-3.1.0.min.js",
+			"index.html"
+		],
+		"refer": [
+			"index.html"
+		]
+	},
+	"content.html": {
+		"resources": [
+			"js/mui.min.js",
+			"fonts/mui.ttf",
+			"css/mui.min.css",
+			"js/PUGE-0.2.js",
+			"index.html",
+			"readNov.html"
+		],
+		"refer": [
+			"index.html",
+			"readNov.html"
+		]
+	},
+	"explain.html": {
+		"resources": [
+			"index.html"
+		],
+		"refer": [
+			"index.html"
+		]
+	}
+}

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>小说阅读</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="css/mui.min.css">
+		 <style>
+    	.zhanwei{
+    		width:100%;
+    		height:40px;
+    	}
+    </style>
+	</head>
+	
+	<body>
+		<div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable">
+			<!--侧滑菜单部分-->
+			<aside id="offCanvasSide" class="mui-off-canvas-left">
+				<div id="offCanvasSideScroll" class="mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<div class="title">侧滑导航</div>
+						<div class="content">
+							这是可拖动式侧滑菜单示例，你可以在这里放置任何内容；关闭侧滑菜单有多种方式： 1.在手机屏幕任意位置向左拖动(drag)；2.点击本侧滑菜单页之外的任意位置; 3.点击如下红色按钮
+							<span class="android-only">；4.Android手机按back键；5.Android手机按menu键
+							</span>。
+							<p style="margin: 10px 15px;">
+								<button id="offCanvasHide" type="button" class="mui-btn mui-btn-danger mui-btn-block" style="padding: 5px 20px;">关闭目录</button>
+							</p>
+
+						</div>
+						<div class="title" style="margin-bottom: 25px;">侧滑列表示例</div>
+						<ul class="mui-table-view mui-table-view-chevron mui-table-view-inverted">
+							<li class="mui-table-view-cell"  id="start">
+								<a class="mui-navigate-right" onclick="alert('sss')">
+									目录：
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</aside>
+			<!--主界面部分-->
+			<div class="mui-inner-wrap">
+				<div id="offCanvasContentScroll" class="mui-content mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<div class="mui-content-padded">
+							<p style="padding: 5px 20px;margin-bottom: 5px;">
+								<button id="offCanvasShow" type="button" class="mui-btn mui-btn-primary mui-btn-block" style="padding: 1px;width: 60px;">
+									目录
+								</button>
+								<ol id="test"></ol>
+							</p>
+							<p>侧滑菜单的移动动画，支持多种效果，切换如下选项体验不同动画效果：</p>
+
+						</div>
+
+						<form class="mui-input-group" style="margin-bottom: 15px;">
+							<div class="mui-input-row mui-radio" >
+								<label>主界面移动、菜单不动</label>
+								<input name="style" type="radio" checked="" value="main-move">
+							</div>
+							<div class="mui-input-row mui-radio">
+								<label>主界面不动、菜单移动</label>
+								<input name="style" type="radio" value="menu-move">
+							</div>
+							<div class="mui-input-row mui-radio mui-hidden" id="move-togger">
+								<label>整体移动</label>
+								<input name="style" type="radio" value="all-move">
+							</div>
+							<div class="mui-input-row mui-radio">
+								<label>缩放式侧滑（类手机QQ）</label>
+								<input name="style" type="radio" value="main-move-scalable">
+							</div>
+							<div class="zhanwei"></div>
+							<div id="item_box" >
+        						<div id="item"></div>
+						        <div id="item2"></div>
+						   	</div>
+						</form>
+
+					</div>
+				</div>
+				<!-- off-canvas backdrop -->
+				<!--<div class="mui-off-canvas-backdrop"></div>-->
+			</div>
+		</div>
+	
+		<script src="js/mui.min.js"></script>
+		<script src="js/PUGE-0.2.js"></script> 
+		<script>
+			//获取所点击目录信息
+			var getAddress;var address = new Array;var sure =false;
+	
+		(function($){ 
+			function plusReady(){ 
+				//success获取小说目录	
+				success = function(response){
+					response = JSON.stringify(response);
+					var box = cut_string(response,'list-group-item\\">','</ul>');
+//					alert(box);
+					    address = cut_string_array(box,'href=\\"','\\">');
+//					alert(address[33]); 
+					var chapters = cut_string_array(box,'html\\">','</a></li>'); 
+//					alert(chapters[3]);
+					//存入目录列表
+					var b = document.getElementById("start");
+					var a = new Array();
+					for(i in address){
+						a[i] = document.createElement("li");
+						a[i].id = ""+i;
+//						alert(a[i].id); 
+						a[i].setAttribute("class","mui-table-view-cell");  
+						a[i].innerHTML = '<a class="mui-navigate-right"  style="overflow:initial;">'+chapters[i]+'</a>'; 
+						insert_tag_after(a[i],b);  
+						(function(i){
+							document.getElementById(""+i).addEventListener('tap',function(){ 		
+//							plus.storage.setItem("address",address[i]); 	
+							
+						//success3 获取小说内容部分
+						success3 = function(response) {
+								response = JSON.stringify(response);
+								var box2 = cut_string(response,'txtContent\\">','v>');
+							    var chapter = cut_string(response,'<h1>',"</h1>");
+							    var content = cut_string(box2,'','</di');				
+							    var a2 = document.createElement("div");
+							    var b2 = document.getElementById("item2");
+							    a2.setAttribute("class","mui-card");
+							    a2.innerHTML='<div ><a style="font-size: 15px;color: #000000;" id="lcr"><br/>章节：'+chapter+'</a><a style="font-size: 15px;color: #000000;"><span><br/>正文： </span>&nbsp;&nbsp;&nbsp;&nbsp;'+content+' </a></div>';
+								insert_tag_after(a2,b2);
+							}		
+//							getAddress = plus.storage.getItem("address");
+							ajax3 = function(url) {$.get(url, "", success3, "HTML");}; 
+							ajax3('http://www.boquge.com'+address[i]);	
+			        });
+						})(i); 
+		
+				}
+					
+			} 
+				var addressItems=plus.storage.getItem("address_items");		
+				ajax = function(url){$.get(url,"",success,"HTML");};
+				ajax('http://www.boquge.com/book'+addressItems);
+				
+				//success2获取小说标题部分
+					success2=function(response){	 
+				var box1 = cut_string(response,'category"','read_url"'); 
+				var label = cut_string(box1,'"','"');
+			    var author = cut_string(box1,'author" content="','"/>');
+			    var novel_name =cut_string(box1,'name" content="','"/>');
+			    var box3 = cut_string(response,'<li class="list-group-item"><a href="','"/>'); 
+				//	截取最新章节
+				//  news = cut_string(box3,'','">'); 
+				//  alert(news);
+				//  ajax('http://www.boquge.com'+news);
+				var a = document.createElement("div");
+				var b = document.getElementById("item");
+				a.setAttribute("class", "mui-card");
+   				 a.innerHTML='<a  id="lab" style="font-size: 49px;" href="#"><button type="button"  class="mui-btn mui-btn-warning" style="position: absolute;">'+label+'</button><span id="novelname" style="font-size: 25px;left:25%;position:relative;">《'+novel_name+'》</span><a style="font-size: 15px;color: #000000;position:relative;left:35%;" id="aut">作者：'+author+'</a></a>';
+   				 insert_tag_after(a,b);
+			}
+				var addressChapter = plus.storage.getItem("address_chapter");
+				ajax2 = function(url) {$.get(url, "", success2, "HTML");}; 
+				ajax2('http://www.boquge.com/xs'+addressItems+'index.html');   
+			}	
+			if(window.plus){
+				plusReady();
+			}else{
+				document.addEventListener("plusready",plusReady,false);
+			}
+		
+	})(mui);
+		</script>
+		
+		<script>
+	
+			mui.init();
+			 //侧滑容器父节点
+			var offCanvasWrapper = mui('#offCanvasWrapper');
+			 //主界面容器
+			var offCanvasInner = offCanvasWrapper[0].querySelector('.mui-inner-wrap');
+			 //菜单容器
+			var offCanvasSide = document.getElementById("offCanvasSide");
+			if (!mui.os.android) {
+				document.getElementById("move-togger").classList.remove('mui-hidden');
+				var spans = document.querySelectorAll('.android-only');
+				for (var i = 0, len = spans.length; i < len; i++) {
+					spans[i].style.display = "none";
+				} 
+			}
+			 //移动效果是否为整体移动
+			var moveTogether = false;
+			 //侧滑容器的class列表，增加.mui-slide-in即可实现菜单移动、主界面不动的效果；
+			var classList = offCanvasWrapper[0].classList;
+			 //变换侧滑动画移动效果；
+			mui('.mui-input-group').on('change', 'input', function() {
+				if (this.checked) {
+					offCanvasSide.classList.remove('mui-transitioning');
+					offCanvasSide.setAttribute('style', '');
+					classList.remove('mui-slide-in');
+					classList.remove('mui-scalable');
+					switch (this.value) {
+						case 'main-move':
+							if (moveTogether) {
+								//仅主内容滑动时，侧滑菜单在off-canvas-wrap内，和主界面并列
+								offCanvasWrapper[0].insertBefore(offCanvasSide, offCanvasWrapper[0].firstElementChild);
+							}
+							break;
+						case 'main-move-scalable':
+							if (moveTogether) {
+								//仅主内容滑动时，侧滑菜单在off-canvas-wrap内，和主界面并列
+								offCanvasWrapper[0].insertBefore(offCanvasSide, offCanvasWrapper[0].firstElementChild);
+							}
+							classList.add('mui-scalable');
+							break;
+						case 'menu-move':
+							classList.add('mui-slide-in');
+							break;
+						case 'all-move':
+							moveTogether = true;
+							//整体滑动时，侧滑菜单在inner-wrap内
+							offCanvasInner.insertBefore(offCanvasSide, offCanvasInner.firstElementChild);
+							break;
+					}
+					offCanvasWrapper.offCanvas().refresh();
+				}
+			});
+			 //主界面‘显示侧滑菜单’按钮的点击事件
+			document.getElementById('offCanvasShow').addEventListener('tap', function() {
+				offCanvasWrapper.offCanvas('show');
+			});
+			 //菜单界面，‘关闭侧滑菜单’按钮的点击事件
+			document.getElementById('offCanvasHide').addEventListener('tap', function() {
+				offCanvasWrapper.offCanvas('close');
+			});
+			 //主界面和侧滑菜单界面均支持区域滚动；
+			mui('#offCanvasSideScroll').scroll();
+			mui('#offCanvasContentScroll').scroll();
+			 //实现ios平台原生侧滑关闭页面；
+			if (mui.os.plus && mui.os.ios) {
+				mui.plusReady(function() { //5+ iOS暂时无法屏蔽popGesture时传递touch事件，故该demo直接屏蔽popGesture功能
+					plus.webview.currentWebview().setStyle({
+						'popGesture': 'none'
+					});
+				});
+			}
+		</script>
+	</body>
+	<script>
+//	alert(document.getElementById("22"));
+//	document.getElementById(""+i).addEventListener('tap',function(i){ 
+//							plus.storage.setItem("address",address[i]);   
+//						}); 
+	</script>
+	
+</html>
